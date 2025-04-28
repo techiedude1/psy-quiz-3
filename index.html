@@ -3,26 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Psychiatry NAPLEX Review Quiz</title>
+    <title>Psychiatry NAPLEX Review Quiz - 50 Questions</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         /* Custom styles for better visual appeal */
+        html {
+             scroll-behavior: smooth; /* Smooth scrolling */
+        }
         body {
             font-family: 'Inter', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); /* Gradient background */
         }
         .quiz-container, .password-container, .results-container {
-            background-color: rgba(255, 255, 255, 0.95); /* Slightly transparent white */
+            background-color: rgba(255, 255, 255, 0.97); /* Slightly more opaque white */
             backdrop-filter: blur(10px); /* Frosted glass effect */
             border-radius: 1rem; /* More rounded corners */
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); /* Softer shadow */
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15); /* Slightly stronger shadow */
+            max-height: 90vh; /* Limit height */
+            overflow-y: auto; /* Add scroll if content overflows */
         }
         .question-card {
             border: 1px solid #e2e8f0; /* Light border */
             transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            background-color: #fff; /* Ensure white background */
+            border-radius: 0.75rem; /* Rounded corners for cards */
         }
         .question-card:hover {
             transform: translateY(-3px);
@@ -40,19 +47,28 @@
         label.answer-option:hover {
             background-color: #f0f9ff; /* Light blue hover */
             border-color: #3b82f6; /* Blue border hover */
-            transform: scale(1.02); /* Slight scale effect */
+            transform: scale(1.01); /* Slightly smaller scale effect */
         }
         input[type="radio"]:checked + label.answer-option {
             background-color: #dbeafe; /* Blue background when selected */
             border-color: #2563eb; /* Darker blue border when selected */
-            font-weight: 500;
+            font-weight: 600; /* Bold when selected */
+            color: #1e40af; /* Darker blue text */
         }
         input[type="radio"] {
             display: none; /* Hide the actual radio button */
         }
-        .submit-button {
+        .submit-button, .password-button, .try-again-button {
             transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem; /* Consistent rounded corners */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+        }
+        .submit-button {
             background: linear-gradient(to right, #ec4899, #ef4444); /* Pink to red gradient */
+            color: white;
         }
         .submit-button:hover {
             background: linear-gradient(to right, #db2777, #dc2626); /* Darker gradient on hover */
@@ -60,13 +76,22 @@
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
         }
         .password-button {
-             transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
              background: linear-gradient(to right, #22c55e, #10b981); /* Green gradient */
+             color: white;
         }
         .password-button:hover {
             background: linear-gradient(to right, #16a34a, #059669); /* Darker green gradient */
             transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        .try-again-button {
+             background: linear-gradient(to right, #3b82f6, #6366f1); /* Blue to indigo gradient */
+             color: white;
+        }
+        .try-again-button:hover {
+            background: linear-gradient(to right, #2563eb, #4f46e5); /* Darker blue gradient */
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
         }
         .correct-answer {
             color: #16a34a; /* Green */
@@ -80,13 +105,15 @@
             font-size: 0.9rem;
             color: #4b5563; /* Gray */
             margin-top: 0.5rem;
-            padding-left: 1rem;
-            border-left: 3px solid #60a5fa; /* Blue left border */
+            padding: 0.75rem;
+            border-left: 4px solid #60a5fa; /* Blue left border */
+            background-color: #f9fafb; /* Very light gray background */
+            border-radius: 0.375rem; /* Rounded corners */
         }
         .result-item {
             border-bottom: 1px dashed #d1d5db;
-            padding-bottom: 1rem;
-            margin-bottom: 1rem;
+            padding-bottom: 1.25rem; /* Increased padding */
+            margin-bottom: 1.25rem; /* Increased margin */
         }
         .result-item:last-child {
             border-bottom: none;
@@ -100,36 +127,46 @@
             -ms-overflow-style: none;  /* IE and Edge */
             scrollbar-width: none;  /* Firefox */
         }
+        /* Style for case scenario questions */
+        .case-scenario-intro {
+            background-color: #eef2ff; /* Light indigo background */
+            border-left: 4px solid #6366f1; /* Indigo border */
+            padding: 0.75rem;
+            margin-bottom: 0.75rem;
+            border-radius: 0.375rem;
+            font-style: italic;
+            color: #4338ca; /* Darker indigo text */
+        }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4">
 
-    <div id="password-section" class="password-container p-6 md:p-8 max-w-md w-full text-center">
+    <div id="password-section" class="password-container p-6 md:p-8 max-w-md w-full text-center no-scrollbar">
         <h1 class="text-2xl md:text-3xl font-bold mb-6 text-gray-800">Enter Password</h1>
         <p class="text-gray-600 mb-4">Please enter the password to access the quiz.</p>
         <input type="password" id="password-input" class="w-full px-4 py-2 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Password">
-        <button id="password-submit" class="password-button w-full text-white font-semibold py-2 px-4 rounded-lg shadow hover:shadow-lg">
+        <button id="password-submit" class="password-button w-full">
             Unlock Quiz
         </button>
         <p id="password-error" class="text-red-500 text-sm mt-3 h-4"></p> </div>
 
-    <div id="quiz-section" class="quiz-container p-6 md:p-8 max-w-3xl w-full hidden">
+    <div id="quiz-section" class="quiz-container p-6 md:p-8 max-w-4xl w-full hidden no-scrollbar">
         <h1 class="text-3xl md:text-4xl font-bold mb-8 text-center text-transparent bg-clip-text bg-gradient-to-r from-purple-600 via-pink-600 to-red-600">Psychiatry NAPLEX Quiz</h1>
         <form id="quiz-form">
             <div id="questions-container" class="space-y-6 mb-8"></div>
 
-            <button type="submit" class="submit-button w-full text-white font-bold py-3 px-6 rounded-lg shadow-md text-lg">
+            <button type="submit" class="submit-button w-full text-lg">
                 Submit Quiz
             </button>
         </form>
     </div>
 
-    <div id="results-section" class="results-container p-6 md:p-8 max-w-3xl w-full hidden">
+    <div id="results-section" class="results-container p-6 md:p-8 max-w-4xl w-full hidden no-scrollbar">
         <h2 class="text-2xl md:text-3xl font-bold mb-6 text-center text-gray-800">Quiz Results</h2>
         <p id="score" class="text-xl font-semibold mb-6 text-center"></p>
         <div id="feedback" class="space-y-6">
             </div>
-         <button onclick="location.reload()" class="mt-8 w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow hover:shadow-lg transition duration-200">
+         <button id="try-again-button" class="try-again-button mt-8 w-full">
             Try Again
         </button>
     </div>
@@ -138,118 +175,674 @@
         // --- Configuration ---
         const correctPassword = "PharmNAPLEX2025"; // Set your desired password here
 
-        const quizData = [
+        // --- Full Quiz Data Store (50 Questions) ---
+        // Note: This array will be shuffled before display.
+        const allQuizData = [
+            // --- Existing Questions (Modified slightly for consistency) ---
             {
-                question: "A patient stabilized on clozapine for schizophrenia presents with fever, sore throat, and malaise. Which lab value is most critical to check immediately?",
+                id: 1,
+                question: "A patient stabilized on clozapine presents with fever, sore throat, and malaise. Which lab value is MOST critical to check immediately?",
                 options: [
-                    "A) Liver function tests (LFTs)",
-                    "B) Complete blood count (CBC) with differential",
-                    "C) Fasting blood glucose",
-                    "D) Serum creatinine"
+                    "Liver function tests (LFTs)",
+                    "Complete blood count (CBC) with differential",
+                    "Fasting blood glucose",
+                    "Serum creatinine"
                 ],
-                correctAnswer: "B) Complete blood count (CBC) with differential",
-                explanation: "Clozapine carries a risk of agranulocytosis (low white blood cell count). Symptoms like fever, sore throat, and malaise suggest a possible infection secondary to neutropenia. An immediate CBC with differential is crucial to assess the absolute neutrophil count (ANC)."
+                correctAnswer: "Complete blood count (CBC) with differential",
+                explanation: "Clozapine carries a significant risk of agranulocytosis. Symptoms like fever and sore throat warrant an immediate CBC with differential to check the absolute neutrophil count (ANC) due to the risk of severe neutropenia.",
+                isCase: false
             },
             {
-                question: "Which antidepressant is contraindicated within 14 days of discontinuing phenelzine?",
+                id: 2,
+                question: "Which antidepressant requires a 14-day washout period after discontinuing phenelzine before it can be initiated?",
                 options: [
-                    "A) Sertraline",
-                    "B) Bupropion",
-                    "C) Mirtazapine",
-                    "D) Trazodone"
+                    "Sertraline",
+                    "Bupropion",
+                    "Mirtazapine",
+                    "Trazodone"
                 ],
-                correctAnswer: "A) Sertraline",
-                explanation: "Phenelzine is a non-selective, irreversible MAOI. Combining MAOIs with SSRIs (like sertraline) can lead to serotonin syndrome, a potentially fatal condition. A 14-day washout period is required when switching between these classes."
+                correctAnswer: "Sertraline",
+                explanation: "Phenelzine is an irreversible MAOI. Concurrent use with SSRIs (like sertraline) can cause potentially fatal serotonin syndrome. A minimum 14-day washout is mandatory.",
+                isCase: false
             },
             {
-                question: "A patient with bipolar I disorder is experiencing an acute manic episode. Which medication is considered a first-line treatment?",
+                id: 3, // Case Scenario
+                caseIntro: "Patient Case: B.M. is a 35-year-old male with bipolar I disorder currently experiencing elevated mood, racing thoughts, decreased need for sleep, and excessive spending.",
+                question: "Which medication is considered a first-line monotherapy option for treating B.M.'s acute manic episode?",
                 options: [
-                    "A) Lamotrigine",
-                    "B) Lithium",
-                    "C) Fluoxetine",
-                    "D) Lorazepam"
+                    "Lamotrigine",
+                    "Lithium",
+                    "Fluoxetine",
+                    "Lorazepam"
                 ],
-                correctAnswer: "B) Lithium",
-                explanation: "Lithium is a gold-standard mood stabilizer and is effective for treating acute mania and preventing future manic and depressive episodes in bipolar I disorder. Valproate and some atypical antipsychotics are also first-line options. Lamotrigine is primarily used for maintenance therapy. Fluoxetine can induce mania. Lorazepam is used adjunctively."
+                correctAnswer: "Lithium",
+                explanation: "Lithium is a gold-standard mood stabilizer for acute mania in bipolar I disorder. Valproate and some atypical antipsychotics (e.g., olanzapine, risperidone) are also first-line. Lamotrigine is better for maintenance/depression, fluoxetine can worsen mania, and lorazepam is adjunctive for agitation/insomnia.",
+                isCase: true
             },
             {
+                id: 4,
                 question: "What is the primary mechanism of action of buspirone?",
                 options: [
-                    "A) Benzodiazepine receptor agonist",
-                    "B) Serotonin 5-HT1A partial agonist",
-                    "C) Serotonin-norepinephrine reuptake inhibitor (SNRI)",
-                    "D) Dopamine D2 receptor antagonist"
+                    "GABA-A receptor modulation",
+                    "Serotonin 5-HT1A partial agonism",
+                    "Serotonin-norepinephrine reuptake inhibition",
+                    "Dopamine D2 receptor antagonism"
                 ],
-                correctAnswer: "B) Serotonin 5-HT1A partial agonist",
-                explanation: "Buspirone is an anxiolytic agent whose primary mechanism is partial agonism at the serotonin 5-HT1A receptor. It does not interact with benzodiazepine receptors."
+                correctAnswer: "Serotonin 5-HT1A partial agonism",
+                explanation: "Buspirone is an anxiolytic that primarily acts as a partial agonist at the presynaptic 5-HT1A receptor, reducing serotonin release, and as a postsynaptic partial agonist. It lacks GABAergic activity.",
+                isCase: false
             },
             {
-                question: "A patient taking olanzapine complains of significant weight gain and feeling thirsty all the time. Which metabolic parameters should be monitored regularly?",
+                id: 5, // Case Scenario
+                caseIntro: "Patient Case: S.P., a 48-year-old female with schizophrenia, has been taking olanzapine 15 mg daily for 6 months. She complains of gaining 25 lbs and constant thirst.",
+                question: "Which set of metabolic parameters is MOST important to monitor regularly in S.P.?",
                 options: [
-                    "A) Weight, waist circumference, blood pressure, fasting glucose, lipid panel",
-                    "B) Serum sodium and potassium",
-                    "C) Thyroid stimulating hormone (TSH)",
-                    "D) Prolactin levels"
+                    "Weight, waist circumference, blood pressure, fasting glucose, lipid panel",
+                    "Serum sodium and potassium",
+                    "Thyroid stimulating hormone (TSH)",
+                    "Prolactin levels"
                 ],
-                correctAnswer: "A) Weight, waist circumference, blood pressure, fasting glucose, lipid panel",
-                explanation: "Atypical antipsychotics, particularly olanzapine, are associated with significant metabolic side effects (weight gain, hyperglycemia, dyslipidemia). Regular monitoring of these parameters is essential."
+                correctAnswer: "Weight, waist circumference, blood pressure, fasting glucose, lipid panel",
+                explanation: "Olanzapine has a high risk of metabolic side effects, including significant weight gain, hyperglycemia, and dyslipidemia. Comprehensive metabolic monitoring is crucial.",
+                isCase: true
             },
              {
-                question: "Which medication used for ADHD is a non-stimulant selective norepinephrine reuptake inhibitor?",
+                id: 6,
+                question: "Which medication used for ADHD is classified as a non-stimulant selective norepinephrine reuptake inhibitor?",
                 options: [
-                    "A) Methylphenidate",
-                    "B) Lisdexamfetamine",
-                    "C) Atomoxetine",
-                    "D) Guanfacine ER"
+                    "Methylphenidate (Ritalin)",
+                    "Lisdexamfetamine (Vyvanse)",
+                    "Atomoxetine (Strattera)",
+                    "Guanfacine ER (Intuniv)"
                 ],
-                correctAnswer: "C) Atomoxetine",
-                explanation: "Atomoxetine is a selective norepinephrine reuptake inhibitor (SNRI) approved for ADHD treatment. Methylphenidate and lisdexamfetamine are stimulants. Guanfacine ER is a selective alpha-2A adrenergic receptor agonist."
+                correctAnswer: "Atomoxetine (Strattera)",
+                explanation: "Atomoxetine selectively inhibits the reuptake of norepinephrine. Methylphenidate and lisdexamfetamine are stimulants. Guanfacine ER is an alpha-2A adrenergic agonist.",
+                isCase: false
             },
             {
-                question: "A patient with major depressive disorder has failed trials of two different SSRIs due to lack of efficacy. Which medication class would be a reasonable next step?",
+                id: 7, // Case Scenario
+                caseIntro: "Patient Case: J.D., a 55-year-old male with major depressive disorder, has not responded adequately to trials of escitalopram 20 mg/day and sertraline 200 mg/day, each for 8 weeks.",
+                question: "Which medication class represents a mechanistically distinct and reasonable next step for J.D.'s treatment?",
                 options: [
-                    "A) Another SSRI",
-                    "B) SNRI (e.g., venlafaxine, duloxetine)",
-                    "C) Benzodiazepine (e.g., alprazolam)",
-                    "D) Typical antipsychotic (e.g., haloperidol)"
+                    "Another SSRI (e.g., paroxetine)",
+                    "SNRI (e.g., venlafaxine)",
+                    "Benzodiazepine (e.g., alprazolam)",
+                    "Typical antipsychotic (e.g., haloperidol)"
                 ],
-                correctAnswer: "B) SNRI (e.g., venlafaxine, duloxetine)",
-                explanation: "After failing two SSRIs, switching to a different class, such as an SNRI, is a common strategy. SNRIs offer dual reuptake inhibition (serotonin and norepinephrine) and may be effective when SSRIs are not."
+                correctAnswer: "SNRI (e.g., venlafaxine)",
+                explanation: "After failing two SSRIs, switching to a different class like an SNRI (targeting both serotonin and norepinephrine) is a standard next step. Trying another SSRI has lower odds of success. Benzodiazepines are not antidepressants, and typical antipsychotics are inappropriate here.",
+                isCase: true
             },
             {
-                question: "Which symptom is characteristic of serotonin syndrome?",
+                id: 8,
+                question: "Which cluster of symptoms is MOST characteristic of serotonin syndrome?",
                 options: [
-                    "A) Bradycardia and hypothermia",
-                    "B) Muscle rigidity, hyperthermia, autonomic instability, altered mental status",
-                    "C) Severe sedation and respiratory depression",
-                    "D) Tardive dyskinesia"
+                    "Bradycardia, hypothermia, pinpoint pupils",
+                    "Clonus, hyperreflexia, hyperthermia, diaphoresis, altered mental status",
+                    "Severe sedation, respiratory depression, constipation",
+                    "Slow, writhing movements (athetosis), facial grimacing"
                 ],
-                correctAnswer: "B) Muscle rigidity, hyperthermia, autonomic instability, altered mental status",
-                explanation: "Serotonin syndrome is a potentially life-threatening condition caused by excessive serotonergic activity. Key features include autonomic instability (hyperthermia, tachycardia), neuromuscular abnormalities (rigidity, myoclonus), and altered mental status."
+                correctAnswer: "Clonus, hyperreflexia, hyperthermia, diaphoresis, altered mental status",
+                explanation: "Serotonin syndrome involves autonomic instability (hyperthermia, diaphoresis, tachycardia), neuromuscular hyperactivity (clonus, hyperreflexia, rigidity), and altered mental status. The other options describe opioid overdose, anticholinergic effects, or tardive dyskinesia.",
+                isCase: false
             },
             {
-                question: "What is the primary indication for using benztropine or diphenhydramine in psychiatric patients?",
+                id: 9,
+                question: "What is the primary indication for using anticholinergic agents like benztropine or diphenhydramine in patients receiving antipsychotic therapy?",
                 options: [
-                    "A) Treating anxiety",
-                    "B) Managing insomnia",
-                    "C) Treating drug-induced extrapyramidal symptoms (EPS)",
-                    "D) Augmenting antidepressant therapy"
+                    "Treating associated anxiety",
+                    "Managing antipsychotic-induced insomnia",
+                    "Treating drug-induced extrapyramidal symptoms (EPS), particularly dystonia and parkinsonism",
+                    "Augmenting the antipsychotic effect"
                 ],
-                correctAnswer: "C) Treating drug-induced extrapyramidal symptoms (EPS)",
-                explanation: "Benztropine and diphenhydramine are anticholinergic agents commonly used to treat acute dystonia and parkinsonism, which are types of extrapyramidal symptoms (EPS) often caused by antipsychotic medications."
+                correctAnswer: "Treating drug-induced extrapyramidal symptoms (EPS), particularly dystonia and parkinsonism",
+                explanation: "Anticholinergics like benztropine are used to counteract the cholinergic overdrive relative to dopamine blockade caused by many antipsychotics, which manifests as EPS (acute dystonia, parkinsonism).",
+                isCase: false
             },
             {
-                question: "A patient is prescribed lithium carbonate 300 mg BID. Which counseling point is essential for this patient?",
+                id: 10, // Case Scenario
+                caseIntro: "Patient Case: R.T., a 62-year-old female, is initiated on lithium carbonate 300 mg BID for bipolar disorder maintenance.",
+                question: "Which counseling point is MOST critical regarding R.T.'s diet and fluid intake?",
                 options: [
-                    "A) Avoid all salt in the diet.",
-                    "B) Maintain consistent fluid and salt intake.",
-                    "C) Take the medication only when feeling symptoms.",
-                    "D) Double the dose if a dose is missed."
+                    "Strictly avoid all salt in the diet.",
+                    "Maintain consistent daily fluid and salt intake.",
+                    "Increase fluid intake significantly only when thirsty.",
+                    "Take the medication with grapefruit juice to enhance absorption."
                 ],
-                correctAnswer: "B) Maintain consistent fluid and salt intake.",
-                explanation: "Lithium has a narrow therapeutic index, and its serum concentration is highly sensitive to changes in sodium and fluid balance. Dehydration or significantly reduced salt intake can increase lithium levels, potentially leading to toxicity. Consistent intake is crucial."
+                correctAnswer: "Maintain consistent daily fluid and salt intake.",
+                explanation: "Lithium clearance is highly dependent on renal function and sodium/water balance. Significant changes (especially dehydration or low salt intake) can drastically alter lithium levels, increasing toxicity risk. Consistency is key. Grapefruit juice interaction is not clinically significant.",
+                isCase: true
+            },
+            // --- New Questions (11-50) ---
+            {
+                id: 11,
+                question: "Which atypical antipsychotic has the LOWEST risk for metabolic side effects (weight gain, dyslipidemia, hyperglycemia)?",
+                options: [
+                    "Olanzapine (Zyprexa)",
+                    "Clozapine (Clozaril)",
+                    "Risperidone (Risperdal)",
+                    "Ziprasidone (Geodon)"
+                ],
+                correctAnswer: "Ziprasidone (Geodon)",
+                explanation: "Among atypical antipsychotics, ziprasidone and lurasidone generally have the lowest risk for metabolic disturbances. Olanzapine and clozapine carry the highest risk.",
+                isCase: false
+            },
+            {
+                id: 12,
+                question: "A patient taking lamotrigine (Lamictal) develops a rash. Which action is most appropriate?",
+                options: [
+                    "Increase the dose of lamotrigine slowly.",
+                    "Administer an antihistamine and continue lamotrigine.",
+                    "Immediately discontinue lamotrigine and seek medical evaluation.",
+                    "Switch to valproic acid immediately."
+                ],
+                correctAnswer: "Immediately discontinue lamotrigine and seek medical evaluation.",
+                explanation: "Any rash occurring during lamotrigine therapy, especially early in treatment or during dose escalation, must be considered potentially serious (Stevens-Johnson Syndrome/Toxic Epidermal Necrolysis) until proven otherwise. Immediate discontinuation and evaluation are required.",
+                isCase: false
+            },
+            {
+                id: 13,
+                question: "Which benzodiazepine has the longest half-life?",
+                options: [
+                    "Alprazolam (Xanax)",
+                    "Lorazepam (Ativan)",
+                    "Diazepam (Valium)",
+                    "Oxazepam (Serax)"
+                ],
+                correctAnswer: "Diazepam (Valium)",
+                explanation: "Diazepam has a long half-life (20-100 hours) due to its active metabolites (e.g., desmethyldiazepam). Alprazolam and lorazepam have intermediate half-lives, while oxazepam has a shorter half-life.",
+                isCase: false
+            },
+            {
+                id: 14,
+                question: "Varenicline (Chantix) is used for smoking cessation. What is its primary mechanism of action?",
+                options: [
+                    "Nicotinic acetylcholine receptor antagonist",
+                    "Nicotinic acetylcholine receptor partial agonist",
+                    "Monoamine oxidase inhibitor",
+                    "Selective serotonin reuptake inhibitor"
+                ],
+                correctAnswer: "Nicotinic acetylcholine receptor partial agonist",
+                explanation: "Varenicline is a partial agonist at the alpha4-beta2 nicotinic acetylcholine receptor. It reduces cravings and withdrawal symptoms by providing mild stimulation while blocking nicotine from cigarettes from binding effectively.",
+                isCase: false
+            },
+            {
+                id: 15,
+                question: "Which medication requires HLA-B*1502 testing in patients of Asian ancestry before initiation due to the risk of Stevens-Johnson syndrome?",
+                options: [
+                    "Lithium",
+                    "Valproic acid",
+                    "Carbamazepine",
+                    "Lamotrigine"
+                ],
+                correctAnswer: "Carbamazepine",
+                explanation: "Carbamazepine carries a boxed warning regarding serious dermatologic reactions (SJS/TEN) associated with the HLA-B*1502 allele, which is more common in Asian populations. Testing is recommended before starting therapy.",
+                isCase: false
+            },
+            {
+                id: 16,
+                question: "What is the primary neurotransmitter system targeted by stimulants like methylphenidate used for ADHD?",
+                options: [
+                    "Serotonin",
+                    "Acetylcholine",
+                    "Dopamine and Norepinephrine",
+                    "GABA"
+                ],
+                correctAnswer: "Dopamine and Norepinephrine",
+                explanation: "Stimulants primarily work by blocking the reuptake of dopamine and norepinephrine in the presynaptic neuron, increasing their availability in the synaptic cleft.",
+                isCase: false
+            },
+            {
+                id: 17,
+                question: "Which antidepressant is often preferred in patients with comorbid neuropathic pain?",
+                options: [
+                    "Citalopram (Celexa)",
+                    "Sertraline (Zoloft)",
+                    "Duloxetine (Cymbalta)",
+                    "Bupropion (Wellbutrin)"
+                ],
+                correctAnswer: "Duloxetine (Cymbalta)",
+                explanation: "SNRIs like duloxetine and venlafaxine have established efficacy in treating neuropathic pain conditions, in addition to depression and anxiety, due to their effects on both serotonin and norepinephrine pathways involved in pain modulation.",
+                isCase: false
+            },
+             {
+                id: 18,
+                question: "A patient on long-term haloperidol therapy develops involuntary, repetitive movements of the tongue, lips, and jaw. What is this condition called?",
+                options: [
+                    "Acute dystonia",
+                    "Akathisia",
+                    "Tardive dyskinesia (TD)",
+                    "Neuroleptic malignant syndrome (NMS)"
+                ],
+                correctAnswer: "Tardive dyskinesia (TD)",
+                explanation: "Tardive dyskinesia is a potentially irreversible movement disorder characterized by involuntary choreoathetoid movements, typically emerging after prolonged exposure to dopamine receptor blocking agents, especially older typical antipsychotics.",
+                isCase: false
+            },
+            {
+                id: 19,
+                question: "Which medication is a VMAT2 inhibitor approved for the treatment of Tardive Dyskinesia?",
+                options: [
+                    "Benztropine (Cogentin)",
+                    "Propranolol (Inderal)",
+                    "Valbenazine (Ingrezza)",
+                    "Clonazepam (Klonopin)"
+                ],
+                correctAnswer: "Valbenazine (Ingrezza)",
+                explanation: "Valbenazine and deutetrabenazine are vesicular monoamine transporter 2 (VMAT2) inhibitors specifically approved for treating tardive dyskinesia by reducing dopamine release.",
+                isCase: false
+            },
+            {
+                id: 20,
+                question: "What is a potential serious side effect associated with mirtazapine, particularly at lower doses?",
+                options: [
+                    "Significant weight gain and sedation",
+                    "Agranulocytosis",
+                    "Hypertensive crisis",
+                    "Serotonin syndrome when used alone"
+                ],
+                correctAnswer: "Significant weight gain and sedation",
+                explanation: "Mirtazapine's potent histamine H1 antagonism leads to significant sedation and appetite stimulation, often resulting in weight gain, especially prominent at lower doses (e.g., 7.5-15 mg).",
+                isCase: false
+            },
+            {
+                id: 21,
+                question: "Which mood stabilizer is associated with a risk of neural tube defects if taken during the first trimester of pregnancy?",
+                options: [
+                    "Lithium",
+                    "Valproic acid / Divalproex",
+                    "Lamotrigine",
+                    "Carbamazepine"
+                ],
+                correctAnswer: "Valproic acid / Divalproex",
+                explanation: "Valproic acid carries a significant risk of major congenital malformations, including neural tube defects (like spina bifida), when used during pregnancy, particularly the first trimester. Carbamazepine also carries this risk, but it's generally considered highest with valproate.",
+                isCase: false
+            },
+            {
+                id: 22,
+                question: "What is the mechanism of action of trazodone that contributes to its sedative effects, making it commonly used for insomnia?",
+                options: [
+                    "Potent serotonin reuptake inhibition",
+                    "Histamine H1 receptor antagonism",
+                    "Dopamine D2 receptor blockade",
+                    "Muscarinic M1 receptor antagonism"
+                ],
+                correctAnswer: "Histamine H1 receptor antagonism",
+                explanation: "Trazodone's sedative properties are primarily attributed to its potent blockade of histamine H1 receptors and alpha-1 adrenergic receptors. Its serotonin reuptake inhibition is weaker at the low doses typically used for sleep.",
+                isCase: false
+            },
+            {
+                id: 23, // Case Scenario
+                caseIntro: "Patient Case: A.L., a 28-year-old female, is diagnosed with Generalized Anxiety Disorder (GAD). She expresses concern about the potential for dependence with benzodiazepines.",
+                question: "Which medication would be an appropriate first-line pharmacologic option for A.L. that is NOT a benzodiazepine?",
+                options: [
+                    "Alprazolam (Xanax)",
+                    "Buspirone (Buspar)",
+                    "Phenobarbital",
+                    "Zolpidem (Ambien)"
+                ],
+                correctAnswer: "Buspirone (Buspar)",
+                explanation: "SSRIs (like escitalopram, sertraline) and SNRIs (like venlafaxine, duloxetine) are considered first-line for GAD. Buspirone is also a first-line option, particularly appealing due to its lack of dependence potential. Alprazolam is a benzodiazepine, phenobarbital is a barbiturate, and zolpidem is for insomnia.",
+                isCase: true
+            },
+            {
+                id: 24,
+                question: "Which antipsychotic medication is available as a long-acting injectable formulation given once every 3 months?",
+                options: [
+                    "Risperidone Consta",
+                    "Haloperidol Decanoate",
+                    "Paliperidone Palmitate (Invega Trinza)",
+                    "Aripiprazole Lauroxil (Aristada)"
+                ],
+                correctAnswer: "Paliperidone Palmitate (Invega Trinza)",
+                explanation: "Invega Trinza (paliperidone palmitate) is unique in its every-3-month dosing interval. Risperdal Consta is every 2 weeks, Haldol Decanoate is typically every 4 weeks, and Aristada has options up to every 2 months.",
+                isCase: false
+            },
+            {
+                id: 25,
+                question: "A patient taking an MAOI (e.g., selegiline patch at a dose >6mg/24hr) should be counseled to avoid foods high in which substance?",
+                options: [
+                    "Tyramine",
+                    "Tryptophan",
+                    "Phenylalanine",
+                    "Glutamate"
+                ],
+                correctAnswer: "Tyramine",
+                explanation: "MAOIs inhibit the breakdown of tyramine, an amino acid found in aged, fermented, or spoiled foods. Ingesting high-tyramine foods while on an MAOI can lead to a hypertensive crisis.",
+                isCase: false
+            },
+            {
+                id: 26,
+                question: "Which sleep aid acts as a selective melatonin receptor agonist?",
+                options: [
+                    "Zolpidem (Ambien)",
+                    "Temazepam (Restoril)",
+                    "Ramelteon (Rozerem)",
+                    "Trazodone (Desyrel)"
+                ],
+                correctAnswer: "Ramelteon (Rozerem)",
+                explanation: "Ramelteon selectively agonizes MT1 and MT2 melatonin receptors in the suprachiasmatic nucleus, promoting sleep initiation. Zolpidem and temazepam are GABA-A modulators, and trazodone works via H1/alpha-1/5HT2A antagonism.",
+                isCase: false
+            },
+            {
+                id: 27,
+                question: "What is a common activating side effect associated with bupropion (Wellbutrin)?",
+                options: [
+                    "Sedation",
+                    "Weight gain",
+                    "Insomnia",
+                    "Orthostatic hypotension"
+                ],
+                correctAnswer: "Insomnia",
+                explanation: "Bupropion's mechanism (norepinephrine and dopamine reuptake inhibition) often leads to activating side effects like insomnia, agitation, and anxiety. It generally causes less sedation, weight gain, and sexual dysfunction than SSRIs/SNRIs.",
+                isCase: false
+            },
+            {
+                id: 28,
+                question: "Which lab parameter should be monitored closely in patients taking valproic acid?",
+                options: [
+                    "Absolute neutrophil count (ANC)",
+                    "Serum potassium levels",
+                    "Liver function tests (LFTs) and platelet count",
+                    "Thyroid stimulating hormone (TSH)"
+                ],
+                correctAnswer: "Liver function tests (LFTs) and platelet count",
+                explanation: "Valproic acid carries boxed warnings for hepatotoxicity (requiring LFT monitoring, especially early in treatment) and pancreatitis. Thrombocytopenia (low platelets) is also a common dose-related side effect.",
+                isCase: false
+            },
+            {
+                id: 29,
+                question: "What is the primary risk associated with abrupt discontinuation of a short-acting benzodiazepine like alprazolam after long-term use?",
+                options: [
+                    "Hypertensive crisis",
+                    "Severe withdrawal symptoms, including seizures",
+                    "Neuroleptic malignant syndrome",
+                    "Serotonin syndrome"
+                ],
+                correctAnswer: "Severe withdrawal symptoms, including seizures",
+                explanation: "Abrupt cessation of benzodiazepines, especially short-acting ones used chronically, can precipitate a withdrawal syndrome characterized by anxiety, insomnia, tremors, and potentially life-threatening seizures.",
+                isCase: false
+            },
+            {
+                id: 30,
+                question: "Which medication is an opioid receptor antagonist used for the treatment of alcohol use disorder and opioid use disorder?",
+                options: [
+                    "Buprenorphine",
+                    "Methadone",
+                    "Naltrexone",
+                    "Acamprosate"
+                ],
+                correctAnswer: "Naltrexone",
+                explanation: "Naltrexone blocks opioid receptors, reducing the rewarding effects of alcohol and opioids. Buprenorphine is a partial opioid agonist, methadone is a full agonist, and acamprosate modulates glutamate/GABA systems for alcohol use disorder.",
+                isCase: false
+            },
+            {
+                id: 31,
+                question: "Which SSRI has the longest half-life, potentially leading to a prolonged washout period?",
+                options: [
+                    "Paroxetine (Paxil)",
+                    "Fluvoxamine (Luvox)",
+                    "Fluoxetine (Prozac)",
+                    "Escitalopram (Lexapro)"
+                ],
+                correctAnswer: "Fluoxetine (Prozac)",
+                explanation: "Fluoxetine and its active metabolite, norfluoxetine, have very long half-lives (fluoxetine ~1-4 days, norfluoxetine ~7-15 days), requiring a longer washout period (e.g., 5 weeks) before starting an MAOI.",
+                isCase: false
+            },
+            {
+                id: 32,
+                question: "Akathisia, a common side effect of antipsychotics, is best described as:",
+                options: [
+                    "Involuntary muscle spasms, often in the neck or eyes.",
+                    "A subjective feeling of inner restlessness and a compelling urge to move.",
+                    "Parkinson-like symptoms such as tremor, rigidity, and bradykinesia.",
+                    "Slow, writhing involuntary movements."
+                ],
+                correctAnswer: "A subjective feeling of inner restlessness and a compelling urge to move.",
+                explanation: "Akathisia is characterized by an inability to sit still, pacing, fidgeting, and a distressing sense of inner restlessness. It's distinct from dystonia (spasms), parkinsonism (tremor/rigidity), and tardive dyskinesia (writhing movements).",
+                isCase: false
+            },
+            {
+                id: 33,
+                question: "Which class of medications is generally considered first-line for treating moderate-to-severe Panic Disorder?",
+                options: [
+                    "Benzodiazepines",
+                    "SSRIs or SNRIs",
+                    "Beta-blockers",
+                    "Typical antipsychotics"
+                ],
+                correctAnswer: "SSRIs or SNRIs",
+                explanation: "SSRIs (e.g., sertraline, paroxetine, fluoxetine) and the SNRI venlafaxine are the preferred first-line treatments for panic disorder due to their proven efficacy and better long-term safety profile compared to benzodiazepines.",
+                isCase: false
+            },
+            {
+                id: 34,
+                question: "What potential drug interaction should be monitored when adding valproic acid to lamotrigine therapy?",
+                options: [
+                    "Valproic acid significantly increases lamotrigine levels.",
+                    "Lamotrigine significantly increases valproic acid levels.",
+                    "Valproic acid significantly decreases lamotrigine levels.",
+                    "There is no significant interaction between these two drugs."
+                ],
+                correctAnswer: "Valproic acid significantly increases lamotrigine levels.",
+                explanation: "Valproic acid inhibits the glucuronidation (metabolism) of lamotrigine, potentially doubling lamotrigine concentrations. This increases the risk of serious rash (SJS/TEN). Lamotrigine doses must be reduced significantly when co-administered with valproic acid.",
+                isCase: false
+            },
+            {
+                id: 35, // Case Scenario
+                caseIntro: "Patient Case: M.K., a 70-year-old male with Parkinson's disease, develops psychosis (hallucinations, paranoia). His neurologist wants to start an antipsychotic.",
+                question: "Which antipsychotic is generally preferred in this patient population due to its lower risk of worsening motor symptoms?",
+                options: [
+                    "Haloperidol (Haldol)",
+                    "Risperidone (Risperdal)",
+                    "Olanzapine (Zyprexa)",
+                    "Quetiapine (Seroquel)"
+                ],
+                correctAnswer: "Quetiapine (Seroquel)",
+                explanation: "Quetiapine and clozapine have the lowest risk of causing or worsening extrapyramidal symptoms (EPS), making them preferred options for psychosis in Parkinson's disease. Pimavanserin is also approved but works differently. Haloperidol, risperidone, and olanzapine have a higher risk of worsening motor function.",
+                isCase: true
+            },
+            {
+                id: 36,
+                question: "What is the primary mechanism by which St. John's Wort (Hypericum perforatum), an OTC supplement, is thought to exert its antidepressant effects?",
+                options: [
+                    "Inhibition of serotonin, norepinephrine, and dopamine reuptake",
+                    "Selective MAO-A inhibition",
+                    "GABA receptor agonism",
+                    "Melatonin receptor agonism"
+                ],
+                correctAnswer: "Inhibition of serotonin, norepinephrine, and dopamine reuptake",
+                explanation: "While the exact mechanism is complex and involves multiple constituents, hyperforin in St. John's Wort appears to weakly inhibit the reuptake of serotonin, norepinephrine, and dopamine, similar to older antidepressants. It's also a potent inducer of CYP3A4, leading to numerous drug interactions.",
+                isCase: false
+            },
+            {
+                id: 37,
+                question: "Which medication requires regular eye exams due to the risk of pigmentary retinopathy, particularly at higher doses?",
+                options: [
+                    "Chlorpromazine (Thorazine)",
+                    "Thioridazine (Mellaril - largely discontinued but relevant historically/exam-wise)",
+                    "Fluphenazine (Prolixin)",
+                    "Perphenazine (Trilafon)"
+                ],
+                correctAnswer: "Thioridazine (Mellaril - largely discontinued but relevant historically/exam-wise)",
+                explanation: "Thioridazine carries a dose-related risk of causing irreversible pigmentary retinopathy (leading to blindness) at doses exceeding 800 mg/day. This toxicity limits its use significantly.",
+                isCase: false
+            },
+            {
+                id: 38,
+                question: "A patient presents with symptoms of Neuroleptic Malignant Syndrome (NMS). Which medication is commonly used as a potential antidote or treatment?",
+                options: [
+                    "Naloxone",
+                    "Flumazenil",
+                    "Dantrolene",
+                    "Benztropine"
+                ],
+                correctAnswer: "Dantrolene",
+                explanation: "NMS is a life-threatening reaction to antipsychotics characterized by fever, rigidity, autonomic instability, and altered mental status. Treatment involves stopping the offending agent, supportive care, and often dantrolene (a muscle relaxant) and/or bromocriptine (a dopamine agonist).",
+                isCase: false
+            },
+            {
+                id: 39,
+                question: "Which antidepressant has significant anticholinergic side effects, making it generally unsuitable for elderly patients?",
+                options: [
+                    "Escitalopram (Lexapro)",
+                    "Sertraline (Zoloft)",
+                    "Amitriptyline (Elavil)",
+                    "Venlafaxine (Effexor)"
+                ],
+                correctAnswer: "Amitriptyline (Elavil)",
+                explanation: "Tricyclic antidepressants (TCAs), particularly tertiary amines like amitriptyline, have strong anticholinergic properties (causing dry mouth, constipation, urinary retention, blurred vision, confusion), making them high-risk medications according to Beers Criteria for use in the elderly.",
+                isCase: false
+            },
+            {
+                id: 40,
+                question: "What is the therapeutic range for lithium levels for acute mania treatment?",
+                options: [
+                    "0.2 - 0.6 mEq/L",
+                    "0.6 - 1.2 mEq/L",
+                    "1.5 - 2.0 mEq/L",
+                    "2.0 - 2.5 mEq/L"
+                ],
+                correctAnswer: "0.6 - 1.2 mEq/L",
+                explanation: "The generally accepted therapeutic range for lithium during acute mania is 0.6 to 1.2 mEq/L. Maintenance therapy often targets the lower end (0.6-1.0 mEq/L). Levels above 1.5 mEq/L increase the risk of toxicity.",
+                isCase: false
+            },
+            {
+                id: 41,
+                question: "Which atypical antipsychotic is available as an orally disintegrating tablet (ODT)?",
+                options: [
+                    "Ziprasidone (Geodon)",
+                    "Lurasidone (Latuda)",
+                    "Olanzapine (Zyprexa Zydis)",
+                    "Iloperidone (Fanapt)"
+                ],
+                correctAnswer: "Olanzapine (Zyprexa Zydis)",
+                explanation: "Olanzapine (Zyprexa Zydis), risperidone (Risperdal M-Tab), and aripiprazole (Abilify Discmelt) are common atypical antipsychotics available in ODT formulations, which can be useful for patients with difficulty swallowing or suspected cheeking.",
+                isCase: false
+            },
+            {
+                id: 42,
+                question: "A patient taking lithium develops tremor, confusion, ataxia, and vomiting. Lithium level is 1.8 mEq/L. What is the most appropriate initial management step?",
+                options: [
+                    "Administer activated charcoal.",
+                    "Increase fluid intake orally.",
+                    "Hold lithium doses and provide supportive care (hydration).",
+                    "Initiate hemodialysis immediately."
+                ],
+                correctAnswer: "Hold lithium doses and provide supportive care (hydration).",
+                explanation: "This patient is exhibiting signs of moderate lithium toxicity. The immediate step is to hold lithium. Supportive care, primarily intravenous hydration with normal saline, is crucial to enhance renal clearance. Hemodialysis is reserved for severe toxicity (e.g., levels >2.5-3 mEq/L with severe symptoms, renal failure).",
+                isCase: false
+            },
+            {
+                id: 43, // Case Scenario
+                caseIntro: "Patient Case: C.B., a 22-year-old college student with ADHD, reports that his extended-release methylphenidate wears off by mid-afternoon, causing difficulty with evening studies.",
+                question: "Which strategy might be considered to address C.B.'s afternoon symptom breakthrough?",
+                options: [
+                    "Switching to atomoxetine monotherapy.",
+                    "Adding a short-acting methylphenidate dose in the early afternoon.",
+                    "Increasing the morning dose of extended-release methylphenidate significantly.",
+                    "Discontinuing ADHD medication altogether."
+                ],
+                correctAnswer: "Adding a short-acting methylphenidate dose in the early afternoon.",
+                explanation: "Supplementing a long-acting morning stimulant with a planned dose of a short-acting formulation in the afternoon ('booster dose') is a common strategy to extend coverage and manage breakthrough symptoms later in the day.",
+                isCase: true
+            },
+            {
+                id: 44,
+                question: "Which OTC sleep aid is an antihistamine with significant anticholinergic properties?",
+                options: [
+                    "Melatonin",
+                    "Valerian Root",
+                    "Diphenhydramine (e.g., Benadryl, ZzzQuil)",
+                    "Doxylamine (e.g., Unisom SleepTabs)"
+                ],
+                correctAnswer: "Diphenhydramine (e.g., Benadryl, ZzzQuil)",
+                explanation: "Diphenhydramine is a first-generation antihistamine with potent anticholinergic and sedative effects. Doxylamine is also an antihistamine with similar properties. Both should be used cautiously, especially in the elderly, due to side effect risks.",
+                isCase: false
+            },
+            {
+                id: 45,
+                question: "Which medication class requires careful monitoring of blood pressure, especially upon initiation and dose titration?",
+                options: [
+                    "SSRIs (e.g., sertraline)",
+                    "SNRIs (e.g., venlafaxine)",
+                    "Benzodiazepines (e.g., lorazepam)",
+                    "Z-drugs (e.g., zolpidem)"
+                ],
+                correctAnswer: "SNRIs (e.g., venlafaxine)",
+                explanation: "SNRIs, particularly venlafaxine (especially at higher doses) and desvenlafaxine, can cause dose-dependent increases in blood pressure due to norepinephrine reuptake inhibition. Blood pressure monitoring is recommended.",
+                isCase: false
+            },
+            {
+                id: 46,
+                question: "What is the primary purpose of the Clozapine REMS (Risk Evaluation and Mitigation Strategy) program?",
+                options: [
+                    "To monitor for metabolic syndrome.",
+                    "To monitor for and manage the risk of severe neutropenia (agranulocytosis).",
+                    "To prevent diversion and misuse.",
+                    "To track cardiovascular side effects like myocarditis."
+                ],
+                correctAnswer: "To monitor for and manage the risk of severe neutropenia (agranulocytosis).",
+                explanation: "The Clozapine REMS program mandates regular monitoring of absolute neutrophil count (ANC) before dispensing clozapine to mitigate the risk of life-threatening agranulocytosis.",
+                isCase: false
+            },
+            {
+                id: 47,
+                question: "Which medication is often used adjunctively to treat nightmares associated with PTSD?",
+                options: [
+                    "Sertraline (Zoloft)",
+                    "Prazosin (Minipress)",
+                    "Buspirone (Buspar)",
+                    "Hydroxyzine (Vistaril)"
+                ],
+                correctAnswer: "Prazosin (Minipress)",
+                explanation: "Prazosin, an alpha-1 adrenergic antagonist, is commonly used off-label to target PTSD-related nightmares and sleep disturbances, although evidence quality varies.",
+                isCase: false
+            },
+            {
+                id: 48,
+                question: "Which antipsychotic requires administration with food (specifically, a meal of at least 350 calories for Latuda, 500 for Geodon) for adequate absorption?",
+                options: [
+                    "Aripiprazole (Abilify)",
+                    "Quetiapine (Seroquel)",
+                    "Lurasidone (Latuda) and Ziprasidone (Geodon)",
+                    "Risperidone (Risperdal)"
+                ],
+                correctAnswer: "Lurasidone (Latuda) and Ziprasidone (Geodon)",
+                explanation: "Both lurasidone and ziprasidone bioavailability is significantly increased when taken with food. Patients must be counseled to take these medications with a sufficient meal to ensure proper absorption and efficacy.",
+                isCase: false
+            },
+            {
+                id: 49, // Case Scenario
+                caseIntro: "Patient Case: T.S., a 40-year-old female with depression and fibromyalgia, is currently taking sertraline 150 mg daily with partial response to mood symptoms but persistent pain.",
+                question: "Which medication could be considered as an augmentation strategy or alternative to potentially address both depression and fibromyalgia pain?",
+                options: [
+                    "Adding bupropion",
+                    "Switching to citalopram",
+                    "Switching to or adding duloxetine",
+                    "Adding lithium"
+                ],
+                correctAnswer: "Switching to or adding duloxetine",
+                explanation: "Duloxetine is an SNRI approved for both major depressive disorder and fibromyalgia. Switching from sertraline (SSRI) to duloxetine, or potentially augmenting sertraline with duloxetine (less common, requires caution), could target both conditions due to its dual serotonin and norepinephrine activity.",
+                isCase: true
+            },
+            {
+                id: 50,
+                question: "What is a key counseling point for patients starting varenicline (Chantix) regarding potential neuropsychiatric effects?",
+                options: [
+                    "It commonly causes significant sedation.",
+                    "Monitor for changes in mood, behavior, agitation, or suicidal ideation.",
+                    "It must be taken with a high-fat meal.",
+                    "It frequently causes orthostatic hypotension."
+                ],
+                correctAnswer: "Monitor for changes in mood, behavior, agitation, or suicidal ideation.",
+                explanation: "Varenicline carries a warning regarding potential serious neuropsychiatric events, including changes in mood (depression, mania), psychosis, hostility, agitation, and suicidal ideation or behavior. Patients should be counseled to monitor for these and report them immediately.",
+                isCase: false
             }
         ];
+
+        // --- State Variables ---
+        let currentQuizData = []; // Holds the shuffled questions for the current session
+        let userAnswers = []; // Stores user's selected answers for the current session
 
         // --- DOM Elements ---
         const passwordSection = document.getElementById('password-section');
@@ -262,8 +855,23 @@
         const quizForm = document.getElementById('quiz-form');
         const scoreDisplay = document.getElementById('score');
         const feedbackContainer = document.getElementById('feedback');
+        const tryAgainButton = document.getElementById('try-again-button');
 
-        // --- Functions ---
+
+        // --- Utility Functions ---
+
+        /**
+         * Shuffles array in place using the Fisher-Yates (Knuth) algorithm.
+         * @param {Array} array Array to shuffle.
+         */
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]]; // Swap elements
+            }
+        }
+
+        // --- Core Functions ---
 
         // Function to check the password
         function checkPassword() {
@@ -271,7 +879,7 @@
             if (enteredPassword === correctPassword) {
                 passwordSection.classList.add('hidden');
                 quizSection.classList.remove('hidden');
-                displayQuiz();
+                initializeQuiz(); // Prepare and display the quiz
             } else {
                 passwordError.textContent = 'Incorrect password. Please try again.';
                 passwordInput.classList.add('border-red-500'); // Add red border on error
@@ -283,37 +891,61 @@
             }
         }
 
-        // Function to display the quiz questions
-        function displayQuiz() {
-            questionsContainer.innerHTML = ''; // Clear previous questions if any
-            quizData.forEach((q, index) => {
-                const questionIndex = index + 1;
-                const questionId = `q${questionIndex}`;
+        // Function to initialize and display the quiz (shuffles questions and options)
+        function initializeQuiz() {
+            // 1. Shuffle the main question data
+            currentQuizData = [...allQuizData]; // Create a copy to shuffle
+            shuffleArray(currentQuizData);
+
+            // 2. Clear previous quiz content and display shuffled questions
+            questionsContainer.innerHTML = '';
+            userAnswers = new Array(currentQuizData.length).fill(null); // Reset user answers array
+
+            currentQuizData.forEach((q, index) => {
+                const questionIndex = index + 1; // Display index (1-50)
+                const questionId = `q${q.id}`; // Use original ID for stable naming if needed, though index is primary key here
 
                 // Create question card
                 const questionCard = document.createElement('div');
-                questionCard.className = 'question-card bg-white p-5 rounded-lg shadow-sm mb-4'; // Added mb-4 for spacing
+                questionCard.className = 'question-card bg-white p-5 rounded-lg shadow-sm mb-4';
+
+                // Add case scenario intro if present
+                if (q.isCase && q.caseIntro) {
+                    const introDiv = document.createElement('div');
+                    introDiv.className = 'case-scenario-intro mb-3';
+                    introDiv.textContent = q.caseIntro;
+                    questionCard.appendChild(introDiv);
+                }
 
                 // Create question text
                 const questionText = document.createElement('p');
                 questionText.className = 'text-lg font-semibold mb-4 text-gray-800';
+                // Use display index for numbering
                 questionText.textContent = `${questionIndex}. ${q.question}`;
                 questionCard.appendChild(questionText);
 
                 // Create options container
                 const optionsDiv = document.createElement('div');
-                optionsDiv.className = 'space-y-2'; // Spacing between options
+                optionsDiv.className = 'space-y-2';
 
-                q.options.forEach((option, optionIndex) => {
-                    const optionId = `${questionId}_option${optionIndex}`;
+                // 3. Shuffle options for the current question
+                const shuffledOptions = [...q.options]; // Copy options to shuffle
+                shuffleArray(shuffledOptions);
+
+                // Store the shuffled order temporarily if needed, or just use it directly
+                q.shuffledOptions = shuffledOptions; // Store shuffled options with the question object for grading
+
+                shuffledOptions.forEach((option, optionIndex) => {
+                    // Unique ID for the radio button based on question index and option index
+                    const optionId = `q${index}_option${optionIndex}`;
 
                     // Create radio input
                     const radioInput = document.createElement('input');
                     radioInput.type = 'radio';
                     radioInput.id = optionId;
-                    radioInput.name = questionId; // Group options by question
-                    radioInput.value = option;
-                    radioInput.className = 'mr-2'; // Hidden by CSS, but keep for functionality
+                    radioInput.name = `q${index}`; // Group options by question index
+                    radioInput.value = option; // The value is the text of the shuffled option
+                    radioInput.className = 'mr-2'; // Hidden by CSS
 
                     // Create label for the option
                     const label = document.createElement('label');
@@ -329,31 +961,39 @@
                 questionCard.appendChild(optionsDiv);
                 questionsContainer.appendChild(questionCard);
             });
+             // Scroll to the top of the quiz section
+             quizSection.scrollTop = 0;
         }
+
 
         // Function to calculate score and display results
         function submitQuiz(event) {
             event.preventDefault(); // Prevent default form submission
 
             let score = 0;
-            const userAnswers = [];
             const feedbackHTML = []; // Array to store feedback HTML strings
 
-            quizData.forEach((q, index) => {
-                const questionIndex = index + 1;
-                const questionId = `q${questionIndex}`;
-                const selectedOption = document.querySelector(`input[name="${questionId}"]:checked`);
+            currentQuizData.forEach((q, index) => {
+                const questionIndex = index + 1; // Display index
+                const selectedOptionInput = document.querySelector(`input[name="q${index}"]:checked`);
+                const userAnswer = selectedOptionInput ? selectedOptionInput.value : null;
 
-                const userAnswer = selectedOption ? selectedOption.value : null;
-                userAnswers.push(userAnswer);
+                userAnswers[index] = userAnswer; // Store the user's answer text
 
                 if (userAnswer === q.correctAnswer) {
                     score++;
                 } else {
                     // Generate feedback for incorrect answers
+                    // Ensure we show the original question number if needed, but display index is fine
+                    const questionNumberForDisplay = index + 1;
+                    let questionDisplay = q.question;
+                     if (q.isCase && q.caseIntro) {
+                        questionDisplay = `[Case] ${q.caseIntro} \n ${q.question}`;
+                     }
+
                     feedbackHTML.push(`
                         <div class="result-item">
-                            <p class="font-semibold text-gray-800">Question ${questionIndex}: ${q.question}</p>
+                            <p class="font-semibold text-gray-800">Question ${questionNumberForDisplay}: ${questionDisplay}</p>
                             <p class="mt-1"><span class="incorrect-answer">Your Answer:</span> ${userAnswer || 'No answer selected'}</p>
                             <p class="mt-1"><span class="correct-answer">Correct Answer:</span> ${q.correctAnswer}</p>
                             <p class="explanation mt-2">${q.explanation}</p>
@@ -363,8 +1003,8 @@
             });
 
             // Display score
-            const percentage = ((score / quizData.length) * 100).toFixed(1);
-            scoreDisplay.textContent = `Your Score: ${score} out of ${quizData.length} (${percentage}%)`;
+            const percentage = ((score / currentQuizData.length) * 100).toFixed(1);
+            scoreDisplay.textContent = `Your Score: ${score} out of ${currentQuizData.length} (${percentage}%)`;
              // Add color based on score
             if (percentage >= 80) {
                 scoreDisplay.className = 'text-xl font-semibold mb-6 text-center text-green-600';
@@ -386,9 +1026,16 @@
             // Hide quiz and show results
             quizSection.classList.add('hidden');
             resultsSection.classList.remove('hidden');
-             // Scroll to top of results
-            resultsSection.scrollIntoView({ behavior: 'smooth' });
+            // Scroll to top of results
+            resultsSection.scrollTop = 0; // Scroll the results container itself
+            // resultsSection.scrollIntoView({ behavior: 'smooth' }); // Alternative: scroll viewport
         }
+
+         // Function to reload the page for a new quiz attempt
+        function reloadQuiz() {
+            location.reload();
+        }
+
 
         // --- Event Listeners ---
         passwordSubmit.addEventListener('click', checkPassword);
@@ -399,9 +1046,10 @@
             }
         });
         quizForm.addEventListener('submit', submitQuiz);
+        tryAgainButton.addEventListener('click', reloadQuiz); // Use reload function
 
         // --- Initial Setup ---
-        // Ensure quiz and results are hidden initially (redundant but safe)
+        // Ensure quiz and results are hidden initially
         quizSection.classList.add('hidden');
         resultsSection.classList.add('hidden');
         passwordSection.classList.remove('hidden'); // Ensure password section is shown first
