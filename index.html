@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Psychiatry NAPLEX Review Quiz</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Custom styles for better visual appeal */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); /* Gradient background */
+        }
+        .quiz-container, .password-container, .results-container {
+            background-color: rgba(255, 255, 255, 0.95); /* Slightly transparent white */
+            backdrop-filter: blur(10px); /* Frosted glass effect */
+            border-radius: 1rem; /* More rounded corners */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); /* Softer shadow */
+        }
+        .question-card {
+            border: 1px solid #e2e8f0; /* Light border */
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .question-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.08);
+        }
+        label.answer-option {
+            display: block;
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.5rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+        }
+        label.answer-option:hover {
+            background-color: #f0f9ff; /* Light blue hover */
+            border-color: #3b82f6; /* Blue border hover */
+            transform: scale(1.02); /* Slight scale effect */
+        }
+        input[type="radio"]:checked + label.answer-option {
+            background-color: #dbeafe; /* Blue background when selected */
+            border-color: #2563eb; /* Darker blue border when selected */
+            font-weight: 500;
+        }
+        input[type="radio"] {
+            display: none; /* Hide the actual radio button */
+        }
+        .submit-button {
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            background: linear-gradient(to right, #ec4899, #ef4444); /* Pink to red gradient */
+        }
+        .submit-button:hover {
+            background: linear-gradient(to right, #db2777, #dc2626); /* Darker gradient on hover */
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+        .password-button {
+             transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+             background: linear-gradient(to right, #22c55e, #10b981); /* Green gradient */
+        }
+        .password-button:hover {
+            background: linear-gradient(to right, #16a34a, #059669); /* Darker green gradient */
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+        .correct-answer {
+            color: #16a34a; /* Green */
+            font-weight: 600;
+        }
+        .incorrect-answer {
+            color: #dc2626; /* Red */
+            font-weight: 600;
+        }
+        .explanation {
+            font-size: 0.9rem;
+            color: #4b5563; /* Gray */
+            margin-top: 0.5rem;
+            padding-left: 1rem;
+            border-left: 3px solid #60a5fa; /* Blue left border */
+        }
+        .result-item {
+            border-bottom: 1px dashed #d1d5db;
+            padding-bottom: 1rem;
+            margin-bottom: 1rem;
+        }
+        .result-item:last-child {
+            border-bottom: none;
+        }
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        /* Hide scrollbar for IE, Edge and Firefox */
+        .no-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <div id="password-section" class="password-container p-6 md:p-8 max-w-md w-full text-center">
+        <h1 class="text-2xl md:text-3xl font-bold mb-6 text-gray-800">Enter Password</h1>
+        <p class="text-gray-600 mb-4">Please enter the password to access the quiz.</p>
+        <input type="password" id="password-input" class="w-full px-4 py-2 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Password">
+        <button id="password-submit" class="password-button w-full text-white font-semibold py-2 px-4 rounded-lg shadow hover:shadow-lg">
+            Unlock Quiz
+        </button>
+        <p id="password-error" class="text-red-500 text-sm mt-3 h-4"></p> </div>
+
+    <div id="quiz-section" class="quiz-container p-6 md:p-8 max-w-3xl w-full hidden">
+        <h1 class="text-3xl md:text-4xl font-bold mb-8 text-center text-transparent bg-clip-text bg-gradient-to-r from-purple-600 via-pink-600 to-red-600">Psychiatry NAPLEX Quiz</h1>
+        <form id="quiz-form">
+            <div id="questions-container" class="space-y-6 mb-8"></div>
+
+            <button type="submit" class="submit-button w-full text-white font-bold py-3 px-6 rounded-lg shadow-md text-lg">
+                Submit Quiz
+            </button>
+        </form>
+    </div>
+
+    <div id="results-section" class="results-container p-6 md:p-8 max-w-3xl w-full hidden">
+        <h2 class="text-2xl md:text-3xl font-bold mb-6 text-center text-gray-800">Quiz Results</h2>
+        <p id="score" class="text-xl font-semibold mb-6 text-center"></p>
+        <div id="feedback" class="space-y-6">
+            </div>
+         <button onclick="location.reload()" class="mt-8 w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow hover:shadow-lg transition duration-200">
+            Try Again
+        </button>
+    </div>
+
+    <script>
+        // --- Configuration ---
+        const correctPassword = "PharmNAPLEX2025"; // Set your desired password here
+
+        const quizData = [
+            {
+                question: "A patient stabilized on clozapine for schizophrenia presents with fever, sore throat, and malaise. Which lab value is most critical to check immediately?",
+                options: [
+                    "A) Liver function tests (LFTs)",
+                    "B) Complete blood count (CBC) with differential",
+                    "C) Fasting blood glucose",
+                    "D) Serum creatinine"
+                ],
+                correctAnswer: "B) Complete blood count (CBC) with differential",
+                explanation: "Clozapine carries a risk of agranulocytosis (low white blood cell count). Symptoms like fever, sore throat, and malaise suggest a possible infection secondary to neutropenia. An immediate CBC with differential is crucial to assess the absolute neutrophil count (ANC)."
+            },
+            {
+                question: "Which antidepressant is contraindicated within 14 days of discontinuing phenelzine?",
+                options: [
+                    "A) Sertraline",
+                    "B) Bupropion",
+                    "C) Mirtazapine",
+                    "D) Trazodone"
+                ],
+                correctAnswer: "A) Sertraline",
+                explanation: "Phenelzine is a non-selective, irreversible MAOI. Combining MAOIs with SSRIs (like sertraline) can lead to serotonin syndrome, a potentially fatal condition. A 14-day washout period is required when switching between these classes."
+            },
+            {
+                question: "A patient with bipolar I disorder is experiencing an acute manic episode. Which medication is considered a first-line treatment?",
+                options: [
+                    "A) Lamotrigine",
+                    "B) Lithium",
+                    "C) Fluoxetine",
+                    "D) Lorazepam"
+                ],
+                correctAnswer: "B) Lithium",
+                explanation: "Lithium is a gold-standard mood stabilizer and is effective for treating acute mania and preventing future manic and depressive episodes in bipolar I disorder. Valproate and some atypical antipsychotics are also first-line options. Lamotrigine is primarily used for maintenance therapy. Fluoxetine can induce mania. Lorazepam is used adjunctively."
+            },
+            {
+                question: "What is the primary mechanism of action of buspirone?",
+                options: [
+                    "A) Benzodiazepine receptor agonist",
+                    "B) Serotonin 5-HT1A partial agonist",
+                    "C) Serotonin-norepinephrine reuptake inhibitor (SNRI)",
+                    "D) Dopamine D2 receptor antagonist"
+                ],
+                correctAnswer: "B) Serotonin 5-HT1A partial agonist",
+                explanation: "Buspirone is an anxiolytic agent whose primary mechanism is partial agonism at the serotonin 5-HT1A receptor. It does not interact with benzodiazepine receptors."
+            },
+            {
+                question: "A patient taking olanzapine complains of significant weight gain and feeling thirsty all the time. Which metabolic parameters should be monitored regularly?",
+                options: [
+                    "A) Weight, waist circumference, blood pressure, fasting glucose, lipid panel",
+                    "B) Serum sodium and potassium",
+                    "C) Thyroid stimulating hormone (TSH)",
+                    "D) Prolactin levels"
+                ],
+                correctAnswer: "A) Weight, waist circumference, blood pressure, fasting glucose, lipid panel",
+                explanation: "Atypical antipsychotics, particularly olanzapine, are associated with significant metabolic side effects (weight gain, hyperglycemia, dyslipidemia). Regular monitoring of these parameters is essential."
+            },
+             {
+                question: "Which medication used for ADHD is a non-stimulant selective norepinephrine reuptake inhibitor?",
+                options: [
+                    "A) Methylphenidate",
+                    "B) Lisdexamfetamine",
+                    "C) Atomoxetine",
+                    "D) Guanfacine ER"
+                ],
+                correctAnswer: "C) Atomoxetine",
+                explanation: "Atomoxetine is a selective norepinephrine reuptake inhibitor (SNRI) approved for ADHD treatment. Methylphenidate and lisdexamfetamine are stimulants. Guanfacine ER is a selective alpha-2A adrenergic receptor agonist."
+            },
+            {
+                question: "A patient with major depressive disorder has failed trials of two different SSRIs due to lack of efficacy. Which medication class would be a reasonable next step?",
+                options: [
+                    "A) Another SSRI",
+                    "B) SNRI (e.g., venlafaxine, duloxetine)",
+                    "C) Benzodiazepine (e.g., alprazolam)",
+                    "D) Typical antipsychotic (e.g., haloperidol)"
+                ],
+                correctAnswer: "B) SNRI (e.g., venlafaxine, duloxetine)",
+                explanation: "After failing two SSRIs, switching to a different class, such as an SNRI, is a common strategy. SNRIs offer dual reuptake inhibition (serotonin and norepinephrine) and may be effective when SSRIs are not."
+            },
+            {
+                question: "Which symptom is characteristic of serotonin syndrome?",
+                options: [
+                    "A) Bradycardia and hypothermia",
+                    "B) Muscle rigidity, hyperthermia, autonomic instability, altered mental status",
+                    "C) Severe sedation and respiratory depression",
+                    "D) Tardive dyskinesia"
+                ],
+                correctAnswer: "B) Muscle rigidity, hyperthermia, autonomic instability, altered mental status",
+                explanation: "Serotonin syndrome is a potentially life-threatening condition caused by excessive serotonergic activity. Key features include autonomic instability (hyperthermia, tachycardia), neuromuscular abnormalities (rigidity, myoclonus), and altered mental status."
+            },
+            {
+                question: "What is the primary indication for using benztropine or diphenhydramine in psychiatric patients?",
+                options: [
+                    "A) Treating anxiety",
+                    "B) Managing insomnia",
+                    "C) Treating drug-induced extrapyramidal symptoms (EPS)",
+                    "D) Augmenting antidepressant therapy"
+                ],
+                correctAnswer: "C) Treating drug-induced extrapyramidal symptoms (EPS)",
+                explanation: "Benztropine and diphenhydramine are anticholinergic agents commonly used to treat acute dystonia and parkinsonism, which are types of extrapyramidal symptoms (EPS) often caused by antipsychotic medications."
+            },
+            {
+                question: "A patient is prescribed lithium carbonate 300 mg BID. Which counseling point is essential for this patient?",
+                options: [
+                    "A) Avoid all salt in the diet.",
+                    "B) Maintain consistent fluid and salt intake.",
+                    "C) Take the medication only when feeling symptoms.",
+                    "D) Double the dose if a dose is missed."
+                ],
+                correctAnswer: "B) Maintain consistent fluid and salt intake.",
+                explanation: "Lithium has a narrow therapeutic index, and its serum concentration is highly sensitive to changes in sodium and fluid balance. Dehydration or significantly reduced salt intake can increase lithium levels, potentially leading to toxicity. Consistent intake is crucial."
+            }
+        ];
+
+        // --- DOM Elements ---
+        const passwordSection = document.getElementById('password-section');
+        const quizSection = document.getElementById('quiz-section');
+        const resultsSection = document.getElementById('results-section');
+        const passwordInput = document.getElementById('password-input');
+        const passwordSubmit = document.getElementById('password-submit');
+        const passwordError = document.getElementById('password-error');
+        const questionsContainer = document.getElementById('questions-container');
+        const quizForm = document.getElementById('quiz-form');
+        const scoreDisplay = document.getElementById('score');
+        const feedbackContainer = document.getElementById('feedback');
+
+        // --- Functions ---
+
+        // Function to check the password
+        function checkPassword() {
+            const enteredPassword = passwordInput.value;
+            if (enteredPassword === correctPassword) {
+                passwordSection.classList.add('hidden');
+                quizSection.classList.remove('hidden');
+                displayQuiz();
+            } else {
+                passwordError.textContent = 'Incorrect password. Please try again.';
+                passwordInput.classList.add('border-red-500'); // Add red border on error
+                 // Clear error after 3 seconds
+                setTimeout(() => {
+                    passwordError.textContent = '';
+                    passwordInput.classList.remove('border-red-500');
+                }, 3000);
+            }
+        }
+
+        // Function to display the quiz questions
+        function displayQuiz() {
+            questionsContainer.innerHTML = ''; // Clear previous questions if any
+            quizData.forEach((q, index) => {
+                const questionIndex = index + 1;
+                const questionId = `q${questionIndex}`;
+
+                // Create question card
+                const questionCard = document.createElement('div');
+                questionCard.className = 'question-card bg-white p-5 rounded-lg shadow-sm mb-4'; // Added mb-4 for spacing
+
+                // Create question text
+                const questionText = document.createElement('p');
+                questionText.className = 'text-lg font-semibold mb-4 text-gray-800';
+                questionText.textContent = `${questionIndex}. ${q.question}`;
+                questionCard.appendChild(questionText);
+
+                // Create options container
+                const optionsDiv = document.createElement('div');
+                optionsDiv.className = 'space-y-2'; // Spacing between options
+
+                q.options.forEach((option, optionIndex) => {
+                    const optionId = `${questionId}_option${optionIndex}`;
+
+                    // Create radio input
+                    const radioInput = document.createElement('input');
+                    radioInput.type = 'radio';
+                    radioInput.id = optionId;
+                    radioInput.name = questionId; // Group options by question
+                    radioInput.value = option;
+                    radioInput.className = 'mr-2'; // Hidden by CSS, but keep for functionality
+
+                    // Create label for the option
+                    const label = document.createElement('label');
+                    label.htmlFor = optionId;
+                    label.textContent = option;
+                    label.className = 'answer-option text-gray-700'; // Apply custom styling class
+
+                    // Append input and label to the options container
+                    optionsDiv.appendChild(radioInput);
+                    optionsDiv.appendChild(label);
+                });
+
+                questionCard.appendChild(optionsDiv);
+                questionsContainer.appendChild(questionCard);
+            });
+        }
+
+        // Function to calculate score and display results
+        function submitQuiz(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            let score = 0;
+            const userAnswers = [];
+            const feedbackHTML = []; // Array to store feedback HTML strings
+
+            quizData.forEach((q, index) => {
+                const questionIndex = index + 1;
+                const questionId = `q${questionIndex}`;
+                const selectedOption = document.querySelector(`input[name="${questionId}"]:checked`);
+
+                const userAnswer = selectedOption ? selectedOption.value : null;
+                userAnswers.push(userAnswer);
+
+                if (userAnswer === q.correctAnswer) {
+                    score++;
+                } else {
+                    // Generate feedback for incorrect answers
+                    feedbackHTML.push(`
+                        <div class="result-item">
+                            <p class="font-semibold text-gray-800">Question ${questionIndex}: ${q.question}</p>
+                            <p class="mt-1"><span class="incorrect-answer">Your Answer:</span> ${userAnswer || 'No answer selected'}</p>
+                            <p class="mt-1"><span class="correct-answer">Correct Answer:</span> ${q.correctAnswer}</p>
+                            <p class="explanation mt-2">${q.explanation}</p>
+                        </div>
+                    `);
+                }
+            });
+
+            // Display score
+            const percentage = ((score / quizData.length) * 100).toFixed(1);
+            scoreDisplay.textContent = `Your Score: ${score} out of ${quizData.length} (${percentage}%)`;
+             // Add color based on score
+            if (percentage >= 80) {
+                scoreDisplay.className = 'text-xl font-semibold mb-6 text-center text-green-600';
+            } else if (percentage >= 60) {
+                scoreDisplay.className = 'text-xl font-semibold mb-6 text-center text-yellow-600';
+            } else {
+                scoreDisplay.className = 'text-xl font-semibold mb-6 text-center text-red-600';
+            }
+
+
+            // Display feedback for incorrect answers
+            if (feedbackHTML.length > 0) {
+                 feedbackContainer.innerHTML = '<h3 class="text-xl font-semibold mb-4 text-gray-700">Review Incorrect Answers:</h3>' + feedbackHTML.join('');
+            } else {
+                feedbackContainer.innerHTML = '<p class="text-green-600 font-semibold text-center text-lg">Excellent! You got all questions correct!</p>';
+            }
+
+
+            // Hide quiz and show results
+            quizSection.classList.add('hidden');
+            resultsSection.classList.remove('hidden');
+             // Scroll to top of results
+            resultsSection.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // --- Event Listeners ---
+        passwordSubmit.addEventListener('click', checkPassword);
+        // Allow submitting password with Enter key
+        passwordInput.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                checkPassword();
+            }
+        });
+        quizForm.addEventListener('submit', submitQuiz);
+
+        // --- Initial Setup ---
+        // Ensure quiz and results are hidden initially (redundant but safe)
+        quizSection.classList.add('hidden');
+        resultsSection.classList.add('hidden');
+        passwordSection.classList.remove('hidden'); // Ensure password section is shown first
+
+    </script>
+
+</body>
+</html>
